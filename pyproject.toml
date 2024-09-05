@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "simpl-data-merge"
+version = "0.1.0"
+description = "Simple utility to merge SIMPL reports from different residents"
+authors = ["Maxwell Spadafore <maxspad@umich.edu>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = "^1.38.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
