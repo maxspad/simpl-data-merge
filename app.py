@@ -15,20 +15,11 @@ logFormatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
 rootLogger = logging.getLogger()
 rootLogger.setLevel(logging.DEBUG)
 
-import os 
-print(os.listdir('/'))
 # pyodide has its own logger registered
 if (not len(rootLogger.handlers)) or ('pyodide' in sys.modules):
-    print('registering handlers')
-    # only if this is our first run
-    fileHandler = logging.FileHandler(_LOG_FILE_NAME, mode='w')
-    fileHandler.setFormatter(logFormatter)
-    rootLogger.addHandler(fileHandler)
-
     consoleHandler = logging.StreamHandler()
     consoleHandler.setFormatter(logFormatter)
     rootLogger.addHandler(consoleHandler)
-
 
 st.title('SIMPL Report Merging Tool')
 st.markdown('''
@@ -76,9 +67,7 @@ zf = st.file_uploader('Upload ZIP file here', type=['zip'])
 placeholder = st.container()
 
 st.divider()
-st.markdown("Problems? Download the logs and email them to Max.")
-with open(_LOG_FILE_NAME, 'r') as f:
-    st.download_button('Download Logs', f, file_name='simpl-data-merge-logs.txt')
+st.markdown("Problems? Email Max.")
 st.caption("©️ Max Spadafore 2024. This is an open source utility available under the MIT license. Code is available [here](https://github.com/maxspad/simpl-data-merge)")
 
 with placeholder:
@@ -121,5 +110,3 @@ with placeholder:
         else:
             st.warning('No milestone reports found in ZIP. Skipping milestone report merge.')
             logging.warning('No milestone reports found. Skipping milestone report merge.')
-
-
