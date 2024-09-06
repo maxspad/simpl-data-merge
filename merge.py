@@ -34,7 +34,7 @@ def merge(z : zipfile.ZipFile, reports_fns : list[str]):
             completed.append(fn)
 
         except Exception as e:
-            logging.error(f'Failed to process report {fn}! Error was:\n{e}')
+            logging.exception(f'Failed to process report {fn}! Error was:\n{e}')
             errors.append(fn)
 
     return dfs, completed, warnings, errors
