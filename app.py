@@ -42,7 +42,7 @@ happens locally on *your* computer. The "upload" button below does not actually 
 data from your computer. For more information, see [this link](https://pyodide.org/en/stable/).
 ''')
 
-def run_reports(reps, report_type):
+def run_reports(reps, report_title, report_type):
     dfs, completed, warnings, errors = merge.merge(z, reps)
 
     if len(errors):
@@ -61,14 +61,14 @@ def run_reports(reps, report_type):
         return None
     
     data_csv = df.to_csv(index=False)
-    st.write(f'Merge complete. **Completed**: {len(completed)} **Warnings**: {len(warnings)} **Errors**: {len(errors)}')
-    logging.info(f'Merge complete. Df shape: {df.shape}')
+    st.write(f'{report_title} merge complete. **Completed**: {len(completed)} **Warnings**: {len(warnings)} **Errors**: {len(errors)}')
+    logging.info(f'{report_title} merge complete. Df shape: {df.shape}')
 
-    st.download_button('Download merged data',
+    st.download_button(f'Download Merged {report_title}',
                        data_csv,
                        file_name=f'simpl-merged-{report_type}.csv',
                        mime='text/csv')
-    with st.expander('**Preview merged data:**'):
+    with st.expander(f'**Preview merged {report_title}:**'):
         st.dataframe(df)
     
 zf = st.file_uploader('Upload ZIP file here', type=['zip'])
@@ -78,7 +78,7 @@ placeholder = st.container()
 st.divider()
 st.markdown("Problems? Download the logs and email them to Max.")
 with open(_LOG_FILE_NAME, 'r') as f:
-    st.download_button('Download Logs', f)
+    st.download_button('Download Logs', f, file_name='simpl-data-merge-logs.txt')
 st.caption("©️ Max Spadafore 2024. This is an open source utility available under the MIT license. Code is available [here](https://github.com/maxspad/simpl-data-merge)")
 
 with placeholder:
@@ -106,18 +106,20 @@ with placeholder:
         logging.error('No user reports or milestone reports found. Stopping.')
         st.stop()
 
-    st.header('User Reports')
-    if len(user_reports):
-        run_reports(user_reports, 'user-reports')
-    else:
-        st.warning('No user reports found in ZIP. Skipping user report merge.')
-        logging.warning('No user reports found, skipping user report merge.')
-
-    st.header('Milestone Reports')
-    if len(mile_reports):
-        run_reports(mile_reports, 'milestone-reports')
-    else:
-        st.warning('No milestone reports found in ZIP. Skipping milestone report merge.')
-        logging.warning('No milestone reports found. Skipping milestone report merge.')
+    t1, t2 = st.tabs(['User Reports','Milestone Reports'])
+    with t1:
+        # st.header('User Reports')
+        if len(user_reports):
+            run_reports(user_reports, 'User Reports', 'user-reports')
+        else:
+            st.warning('No user reports found in ZIP. Skipping user report merge.')
+            logging.warning('No user reports found, skipping user report merge.')
+    with t2: 
+        # st.header('Milestone Reports')
+        if len(mile_reports):
+            run_reports(mile_reports, 'Milestone Reports', 'milestone-reports')
+        else:
+            st.warning('No milestone reports found in ZIP. Skipping milestone report merge.')
+            logging.warning('No milestone reports found. Skipping milestone report merge.')
 
 
